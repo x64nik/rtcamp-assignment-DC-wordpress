@@ -1,19 +1,19 @@
-#!/bin/bash
+y#!/bin/bash
 
 
 docker_install() {
-    echo "Updating before Installiation.."
+    print "Updating before Installiation.."
     sudo apt-get update
     sudo apt-get install ca-certificates curl gnupg
     sudo install -m 0755 -d /etc/apt/keyrings
-    echo "Adding Dockers GPG key"
+    print "Adding Dockers GPG key"
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     sudo chmod a+r /etc/apt/keyrings/docker.gpg
-    echo "Adding Docker repo"
-    echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    echo "Updating Repo..."
+    print "Adding Docker repo"
+    print "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu "$(. /etc/os-release && print "$VERSION_CODENAME")" stable" |  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    print "Updating Repo..."
     sudo apt-get update
-    echo "Installing Docker"   
+    print "Installing Docker"   
     sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin 
 
     tput setaf 5; read -p "Do you want to add user to docker group and setgid to it? (y/n) [Default: n] " option
@@ -21,23 +21,23 @@ docker_install() {
     
     if [[ "$option" != "n" ]]
     then
-        echo "Adding user to docker group..."
+        print "Adding user to docker group..."
         sudo usermod -aG docker $USER
         sudo chgrp docker $(which docker)
         sudo chmod g+s $(which docker)
-        echo "User added, please restart bash after script finish"
+        print "User added, please restart bash after script finish"
     fi
     
-    echo "Enabling docker service.."
+    print "Enabling docker service.."
     sudo systemctl enable docker.service
     sudo systemctl enable containerd.service
 
     
     if ! [[ $(command -v docker) ]]
     then
-        tput setaf 1; echo "Somthing went wrong, please check your system configs!"
+        tput setaf 1; print "Somthing went wrong, please check your system configs!"
     else
-        tput setaf 2; echo "Docker is installed now!"
+        tput setaf 2; print "Docker is installed now!"
     fi
 }
 
@@ -47,9 +47,9 @@ docker_compose_install() {
 
     if ! [[ $(command -v docker-compose) ]]
     then
-        tput setaf 1; echo "Somthing went wrong, please check your system configs!"
+        tput setaf 1; print "Somthing went wrong, please check your system configs!"
     else
-        tput setaf 2; echo "docker-compose is installed now!"
+        tput setaf 2; print "docker-compose is installed now!"
     fi
 
 }
@@ -57,34 +57,34 @@ docker_compose_install() {
 
 check_binary() {
 
-    echo "Checking docker..."
+    print "Checking docker..."
 
     if ! [[ $(command -v docker) ]]
     then
-        tput setaf 1; echo "Docker not found, Installing Docker now..."
+        tput setaf 1; print "Docker not found, Installing Docker now..."
         docker_install
     else
-        tput setaf 2; echo "docker is already installed"
+        tput setaf 2; print "docker is already installed"
     fi
 
-    echo " "
-    echo "Checking docker-compose..."
+    print " "
+    print "Checking docker-compose..."
 
 
     if ! [[ $(command -v docker-compose) ]]
     then
-        tput setaf 1; echo "docker-compose not found, Installing docker-compose now..."
+        tput setaf 1; print "docker-compose not found, Installing docker-compose now..."
         docker_compose_install
     else
-        tput setaf 2; echo "docker-compose is already installed"
+        tput setaf 2; print "docker-compose is already installed"
     fi
 
 }
 
 site_name_entry () {
-    tput setaf 4; echo "adding sitename to hosts file"
+    tput setaf 4; print "adding sitename to hosts file"
     site_name="$1"
-    sudo echo "127.0.0.1 $site_name" >> /etc/hosts
+    sudo print "127.0.0.1 $site_name" >> /etc/hosts
 }
 
 nginx_initial_setup() {
@@ -118,24 +118,24 @@ cat > default.conf << EOF
         }
     }
 EOF
-    echo "Added nginx config"
+    print "Added nginx config"
     cd ..
     cd public
 
 cat > index.php << EOF
     <?php
-      echo "here";
+      print "here";
       phpinfo();
     ?>
 EOF
-tput setaf 1; echo "added site"
+tput setaf 1; print "added site"
 cd ..
 
 }
 
 create_docker_compose() {
 
-echo "creating docker compose file...."
+print "creating docker compose file...."
 
 
 cat > docker-compose.yml << EOF 
@@ -215,10 +215,9 @@ networks:
   wp-docker-01:
 volumes:
   db_data:
-  wp_data:
 EOF
 
-tput setaf 2; echo "docker file created!"
+tput setaf 2; print "docker file created!"
 
 } 
 
@@ -231,7 +230,7 @@ wpcli_setup() {
   docker exec $wp_container_id mv wp-cli.phar /usr/local/bin/wp
 
 
-  tput setaf 3; echo "Waiting for Mysql DB to start...."
+  tput setaf 3; print "Waiting for Mysql DB to start...."
 
   sleep 10
   docker exec $wp_container_id wp core install --path=/var/www/html --url=localhost --admin_user=admin --admin_password=password --admin_email=admin@admin.com --skip-email --title=$site_title --allow-root
@@ -243,37 +242,37 @@ wpcli_setup() {
 create_lemp_wp() {
     pwd 
     ls
-    tput setaf 1; echo "killing ports..."
+    tput setaf 1; print "killing ports..."
     sudo fuser -k 80/tcp 8000/tcp 9000/tcp 8001/tcp 8080/tcp 
     site_name=$1
     docker-compose up -d
-    tput setaf 2; echo "Container Created!"
+    tput setaf 2; print "Container Created!"
 
     wpcli_setup $site_name
 
 
-    tput setaf 10; echo "Your site $site_name up and running."
-    tput setaf 2; echo "for local, Click here on link: http://$site_name"
+    tput setaf 10; print "Your site $site_name up and running."
+    tput setaf 2; print "for local, Click here on link: http://$site_name"
 
     if [ "$2" == "enable" ]
     then
       docker-compose start
-      tput setaf 2; echo "Containers Started!"
+      tput setaf 2; print "Containers Started!"
     elif [ "$2" == "disable" ]
     then
       docker-compose stop
-      tput setaf 1; echo "Containers Stopped!"
+      tput setaf 1; print "Containers Stopped!"
     fi
 
     if [ "$2" == "delete" ]
     then
-      tput setaf 1; echo "Removing containers..."
+      tput setaf 1; print "Removing containers..."
       docker-compose down -v
       sed -i "/$site_name/d" /etc/hosts
       pwd
       ls
       rm -rf ../wp-docker
-      tput setaf 1; echo "Site Deleted!"
+      tput setaf 1; print "Site Deleted!"
     fi
 
 }
