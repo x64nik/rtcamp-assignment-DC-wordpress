@@ -1,4 +1,4 @@
-y#!/bin/bash
+#!/bin/bash
 
 
 docker_install() {
