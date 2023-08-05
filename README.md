@@ -1,6 +1,11 @@
 ## Script Description
 A bash script, which install checks if **docker** and **docker-compose** is installed on the system and if not then it will install both the packages and will be able to create a **WordPress** site of latest WordPress Version.
 
+* Your site name will be added to the /etc/hosts file which will be point to localhost (127.0.0.1)
+
+* NOTE: if you are running this script first time, please run the script with site name, so docker and docker-compose will get installed properly
+
+
 ### How to use
 
 * NOTE: Script needs sudo privileges to execute properly
@@ -8,20 +13,22 @@ A bash script, which install checks if **docker** and **docker-compose** is inst
 ```bash
 #commands 
 
-# to create a site
-sudo ./dc-wp-create.sh SITE_NAME 
 
-# to disable/enable site
-sudo ./dc-wp-create.sh SITE_NAME disable 
-sudo ./dc-wp-create.sh SITE_NAME enable
+#get help
+sudo ./create.sh --help
 
-# to delete site
-sudo ./dc-wp-create.sh SITE_NAME delete
+#create a site
+sudo ./create.sh sitename.local
 
+#stop containers
+sudo ./create.sh stop
 
-example: 
+#start containers
+sudo ./create.sh start
 
-sudo ./dc-wp-create.sh hirtcamp.local 
+#delete containers
+sudo ./create.sh delete
+
 
 
 ```

@@ -286,9 +286,9 @@ delete_site() {
 
 
 help_func() {
-  echo "To create a site: sudo ./create-site.sh <sitename>"
-  echo "To start/stop site containers: sudo ./create-site.sh stop/start"
-  echo "To delete site: sudo ./create-site.sh delete"
+  echo "To create a site: sudo ./create.sh <sitename>"
+  echo "To start/stop site containers: sudo ./create.sh stop/start"
+  echo "To delete site: sudo ./create.sh delete"
 }
 
 
